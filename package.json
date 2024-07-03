@@ -4,6 +4,7 @@
   "description": "* typescriptの練習",
   "main": "index.js",
   "devDependencies": {
+    "@types/node": "^20.14.9",
     "typescript": "^5.5.3"
   },
   "scripts": {
