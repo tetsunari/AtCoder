@@ -5,15 +5,15 @@ const Main = (input: string) => {
 
     const lines = data.split('\n');
 
-    const [a, b] = lines[0].split(' ').map(Number);
-    let c = '';
-    if (a * b % 2 === 0) {
-        c = 'Even';
-    } else {
-        c = 'Odd';
-    }
+    const a = lines[0].split('');
 
-    console.log(c);
+    let b = 0;
+    a.forEach(v => {
+        if (parseInt(v) === 1) {
+            b++;
+        }
+    });
+    console.log(b);
 }
 
 Main(fs.readFileSync('/app/src/index.txt', 'utf-8'));
