@@ -2,18 +2,20 @@ import * as fs from 'fs';
 
 const Main = (input: string) => {
     const data = input;
-
     const lines = data.split('\n');
+    const n = parseInt(lines[0]);
+    const a = lines[1].split(' ').map(Number);
 
-    const a = lines[0].split('');
+    let count = 0;
 
-    let b = 0;
-    a.forEach(v => {
-        if (parseInt(v) === 1) {
-            b++;
+    while (a.every(x => x % 2 === 0)) {
+        for (let i = 0; i < n; i++) {
+            a[i] /= 2;
         }
-    });
-    console.log(b);
+        count++;
+    }
+
+    console.log(count);
 }
 
 Main(fs.readFileSync('/app/src/index.txt', 'utf-8'));
