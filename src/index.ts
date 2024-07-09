@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 
-const Main = (input: string) => {
+const Main = (input: string): void => {
     const data = input;
     const lines = data.split('\n');
     const a = parseInt(lines[0]);
