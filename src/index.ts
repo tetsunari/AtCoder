@@ -2,23 +2,18 @@ import * as fs from 'fs';
 
 const Main = (input: string): void => {
     const data = input;
-    const lines = data.split('\n');
-    const a = parseInt(lines[0]);
-    const b = parseInt(lines[1]);
-    const c = parseInt(lines[2]);
-    const x = parseInt(lines[3]);
+    const lines = data.split(' ').map(Number);
+    const [n, a, b] = lines;
 
-    let count = 0;
-    for (let i = 0; i < a + 1; i++) {
-        for (let j = 0; j < b + 1; j++) {
-            for (let k = 0; k < c + 1; k++) {
-                if (500 * i + 100 * j + 50 * k === x) {
-                    count++;
-                }
-            }
+    let sum = 0;
+    for (let i = 1; i <= n; i++) {
+        const num = i.toString().split('').map(Number).reduce((c, d) => c + d, 0);
+        if (num >= a && num <= b) {
+            sum += i;
         }
     }
-    console.log(count);
+
+    console.log(sum);
 }
 
 Main(fs.readFileSync('/app/src/index.txt', 'utf-8'));
