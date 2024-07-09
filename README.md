@@ -17,4 +17,5 @@ import * as fs from "fs";
 const inputs = fs.readFileSync("/dev/stdin", "utf8");
 ```
 ### 編集ファイル
-基本的に`src/index.ts`と`index.txt`の編集を行う
+基本的に`src/index.ts`と`src/index.txt`(入力値)の編集を行う
+→過去の問題はcommitログから辿る
