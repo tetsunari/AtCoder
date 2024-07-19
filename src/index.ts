@@ -1,29 +1,21 @@
 import * as fs from 'fs';
 
-const canFormString = (S: string): boolean => {
-    const words = ['dream', 'dreamer', 'erase', 'eraser'];
-    let T = S;
-
-    while (T.length > 0) {
-        let matched = false;
-        for (const word of words) {
-            if (T.endsWith(word)) {
-                T = T.slice(0, -word.length);
-                matched = true;
-                break;
+const findBillCombination = (N: number, Y: number): [number, number, number] => {
+    for (let i = 0; i <= N; i++) {
+        for (let j = 0; j <= N - i; j++) {
+            const k = N - i - j;
+            if (i * 10000 + j * 5000 + k * 1000 === Y) {
+                return [i, j, k];
             }
         }
-        if (!matched) {
-            return false;
-        }
     }
-    return true;
+    return [-1, -1, -1];
 }
 
 const Main = (input: string): void => {
-    const S = input.trim();
-    const result = canFormString(S);
-    console.log(result ? 'YES' : 'NO');
+    const [N, Y] = input.split('\n')[0].split(' ').map(Number);
+    const [a, b, c] = findBillCombination(N, Y);
+    console.log(`${a} ${b} ${c}`);
 }
 
 Main(fs.readFileSync('/app/src/index.txt', 'utf-8'));
