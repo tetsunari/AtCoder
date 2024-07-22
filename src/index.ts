@@ -1,32 +1,40 @@
 import * as fs from 'fs';
 
-const isTravelPlan = (N: number, plan: number[][]): boolean => {
-    let t_prev = 0;
-    let x_prev = 0;
-    let y_prev = 0;
-
-    for (const[t, x, y] of plan) {
-        const timeDiff = t - t_prev;
-        const distance = Math.abs(x - x_prev) + Math.abs(y - y_prev);
-
-        if (timeDiff < distance || (timeDiff - distance) % 2 !== 0) {
-            return false;
+const isValid = (N: number, L: number, K: number, A: number[], mid: number): boolean => {
+    let count = 0;
+    let prev = 0;
+    for (let i = 0; i < N; i++) {
+        if (A[i] - prev >= mid && L - A[i] >= mid) {
+            count++;
+            prev = A[i];
         }
-
-        t_prev = t;
-        x_prev = x;
-        y_prev = y;
     }
-    return true;
+    return count >= K;
+}
+
+const MaxScore = (N: number, L: number, K: number, A: number[]): number => {
+    let left = 1;
+    let right = L;
+    let ans = 0;
+    while (left <= right) {
+        const mid = Math.floor((left + right) / 2);
+
+        if (isValid(N, L, K, A, mid)) {
+            ans = mid;
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+    return ans;
 };
 
 const Main = (input: string): void => {
     const lines = input.trim().split('\n');
-    const N = parseInt(lines[0]);
-    const S = lines.splice(1).map(line => line.split(' ').map(Number));
-
-    const ret = isTravelPlan(N, S) ? 'Yes' : 'No';
-    console.log(ret);
+    const [N, L] = lines[0].split(' ').map(Number);
+    const K = Number(lines[1]);
+    const A = lines[2].split(' ').map(Number);
+    console.log(MaxScore(N, L, K, A));
 }
 
 Main(fs.readFileSync('/app/src/index.txt', 'utf-8'));
