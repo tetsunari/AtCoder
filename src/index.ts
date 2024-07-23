@@ -1,40 +1,32 @@
 import * as fs from 'fs';
 
-const isValid = (N: number, L: number, K: number, A: number[], mid: number): boolean => {
-    let count = 0;
-    let prev = 0;
-    for (let i = 0; i < N; i++) {
-        if (A[i] - prev >= mid && L - A[i] >= mid) {
-            count++;
-            prev = A[i];
+const generatePair = (n: number): string[] => {
+    const result: string[] = [];
+    const pair = (str: string, open: number, close: number) => {
+        if (str.length === n * 2) {
+            result.push(str);
+            return;
         }
-    }
-    return count >= K;
+        if (open < n) {
+            pair(str + '(', open + 1, close);
+        }
+        if (close < open) {
+            pair(str + ')', open, close + 1);
+        }
+    };
+    pair('', 0, 0);
+    return result;
 }
-
-const MaxScore = (N: number, L: number, K: number, A: number[]): number => {
-    let left = 1;
-    let right = L;
-    let ans = 0;
-    while (left <= right) {
-        const mid = Math.floor((left + right) / 2);
-
-        if (isValid(N, L, K, A, mid)) {
-            ans = mid;
-            left = mid + 1;
-        } else {
-            right = mid - 1;
-        }
-    }
-    return ans;
-};
 
 const Main = (input: string): void => {
     const lines = input.trim().split('\n');
-    const [N, L] = lines[0].split(' ').map(Number);
-    const K = Number(lines[1]);
-    const A = lines[2].split(' ').map(Number);
-    console.log(MaxScore(N, L, K, A));
+    const N = Number(lines[0]);
+
+    if (N % 2 !== 0) {
+        return;
+    }
+    const result = generatePair(N / 2);
+    result.forEach((ret: string) => console.log(ret));
 }
 
 Main(fs.readFileSync('/app/src/index.txt', 'utf-8'));
