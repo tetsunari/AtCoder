@@ -1,57 +1,73 @@
 import * as fs from 'fs';
 
-type Query = [number, number, number];
+class SegmentTree {
+    private tree: number[];
+    private n: number;
 
-class UnionFind {
-    private parent: number[];
-    private rank: number[];
-
-    constructor(size: number) {
-        this.parent = Array.from({ length: size }, (_, i) => i);
-        this.rank = Array(size).fill(0);
+    constructor(arr: number[]) {
+        this.n = arr.length;
+        this.tree = new Array(2 * this.n).fill(0);
+        this.build(arr);
     }
 
-    find(x: number): number {
-        if (this.parent[x] !== x) {
-            this.parent[x] = this.find(this.parent[x]); // Path compression
+    private build(arr: number[]) {
+        for (let i = 0; i < this.n; i++) {
+            this.tree[this.n + i] = arr[i];
         }
-        return this.parent[x];
+        for (let i = this.n - 1; i > 0; i--) {
+            this.tree[i] = this.tree[i * 2] + this.tree[i * 2 + 1];
+        }
     }
 
-    union(x: number, y: number): void {
-        const rootX = this.find(x);
-        const rootY = this.find(y);
+    update(index: number, value: number) {
+        index += this.n;
+        this.tree[index] += value;
+        while (index > 1) {
+            index = Math.floor(index / 2);
+            this.tree[index] = this.tree[index * 2] + this.tree[index * 2 + 1];
+        }
+    }
 
-        if (rootX !== rootY) {
-            if (this.rank[rootX] > this.rank[rootY]) {
-                this.parent[rootY] = rootX;
-            } else if (this.rank[rootX] < this.rank[rootY]) {
-                this.parent[rootX] = rootY;
-            } else {
-                this.parent[rootY] = rootX;
-                this.rank[rootX]++;
+    query(left: number, right: number): number {
+        left += this.n;
+        right += this.n;
+        let sum = 0;
+        while (left < right) {
+            if (left % 2 === 1) {
+                sum += this.tree[left];
+                left++;
             }
+            if (right % 2 === 1) {
+                right--;
+                sum += this.tree[right];
+            }
+            left = Math.floor(left / 2);
+            right = Math.floor(right / 2);
         }
-    }
-
-    connected(x: number, y: number): boolean {
-        return this.find(x) === this.find(y);
+        return sum;
     }
 }
 
 const Main = (input: string): void => {
     const lines = input.trim().split('\n');
     const [N, Q] = lines[0].split(' ').map(Number);
-    const queries: Query[] = lines.slice(1).map(line => line.split(' ').map(Number) as Query);
+    const arr = lines[1].split(' ').map(Number);
+    const queries = lines.slice(2);
 
-    const uf = new UnionFind(N);
-    const results = [];
+    const segTree = new SegmentTree(arr);
 
-    for (const [t, u, v] of queries) {
-        if (t === 0) {
-            uf.union(u, v);
-        } else if (t === 1) {
-            results.push(uf.connected(u, v) ? '1' : '0');
+    const results: number[] = [];
+    for (const query of queries) {
+        const parts = query.split(' ');
+        const type = Number(parts[0]);
+        if (type === 0) {
+            const p = Number(parts[1]);
+            const x = Number(parts[2]);
+            segTree.update(p, x);
+        } else if (type === 1) {
+            const l = Number(parts[1]);
+            const r = Number(parts[2]);
+            results.push(segTree.query(l, r));
         }
     }
 
