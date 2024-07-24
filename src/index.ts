@@ -8,7 +8,7 @@ const sum = (A: number[]): number => {
 
 const Main = (input: string): void => {
     const lines = input.trim().split('\n');
-    const A = lines[0].split(' ').map(Number);
+    const A = lines[1].split(' ').map(Number);
     console.log(sum(A));
 }
 
