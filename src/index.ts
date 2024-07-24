@@ -2,7 +2,7 @@ import * as fs from 'fs';
 
 const sum = (A: number[]): number => {
     return A.reduce((prev,curr,index,array) => {
-        return prev * curr;
+        return prev + curr;
     });
 };
 
