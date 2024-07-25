@@ -1,24 +1,35 @@
 import * as fs from 'fs';
 
-class Math<T>{
-    private N: T;
-    private times: number;
-    private add: number;
+class CountMultiples {
+    private N: number;
+    private X: number;
+    private Y: number;
 
-    constructor(N: T) {
-        this.N = N;
-        this.times = 2;
-        this.add = 3;
+    constructor(data: number[]) {
+        [this.N, this.X, this.Y] = data;
+    }
+
+    private gcd(a: number, b: number): number {
+        return b === 0 ? a : this.gcd(b, a % b);
+    }
+
+    private lcm(a: number, b: number): number {
+        return a * (b / this.gcd(a, b));
     }
 
     exec(): number {
-        return (Number(this.N) * this.times) + this.add;
+        const countX = Math.floor(this.N / this.X);
+        const countY = Math.floor(this.N / this.Y);
+        const lcm = this.lcm(this.X, this.Y);
+        const countXY = Math.floor(this.N / lcm);
+        return countX + countY - countXY;
     }
 }
 
 const Main = (input: string): void => {
     const lines = input.trim().split('\n');
-    const math = new Math<String>(lines[0]);
+    const data = lines[0].split(' ').map(Number);
+    const math = new CountMultiples(data);
     console.log(math.exec());
 }
 
