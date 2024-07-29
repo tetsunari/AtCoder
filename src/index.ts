@@ -10,8 +10,6 @@ const Brute = (N: number, S: number, data: number[]): boolean => {
                 ret[i + 1][j] = true;
                 if (j + data[i] <= S) {
                     ret[i + 1][j + data[i]] = true;
-                } else {
-                    break;
                 }
             }
         }
