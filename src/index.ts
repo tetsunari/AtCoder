@@ -1,20 +1,22 @@
 import * as fs from 'fs';
 
-const isPrimeNumber = (N: number): boolean => {
-    if (N <= 1) return false;
-    if (N <= 3) return true;
-    if (N % 2 === 0 || N % 3 === 0) return false;
-
-    for (let i = 5; i * i <= N; i += 6) {
-        if (N % i === 0 || N % (i + 2) === 0) return false;
+const Divisor = (N: number): number[] => {
+    const divisorList: number[] = [];
+    for (let i = 1; i * i <= N; i++) {
+        if (N % i === 0) {
+            divisorList.push(i);
+            if (i !== N / i) {
+                divisorList.push(N / i);
+            }
+        }
     }
-    return true;
+    return divisorList.sort((a, b) => a - b);
 }
 
 const Main = (input: string): void => {
     const lines = input.trim().split('\n');
     const N = Number(lines[0]);
-    console.log(isPrimeNumber(N) ? 'Yes' : 'No');
+    console.log(Divisor(N).join(' '));
 }
 
 Main(fs.readFileSync('/app/src/index.txt', 'utf-8'));
