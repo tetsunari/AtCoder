@@ -1,30 +1,20 @@
 import * as fs from 'fs';
 
-const PrintPrimeNumbers = (N: number): number[] => {
-    const isPrime: boolean[] = Array(N + 1).fill(true);
-    isPrime[0] = isPrime[1] = false;
+const isPrimeNumber = (N: number): boolean => {
+    if (N <= 1) return false;
+    if (N <= 3) return true;
+    if (N % 2 === 0 || N % 3 === 0) return false;
 
-    for (let i = 2; i * i <= N; i++) {
-        if (isPrime[i]) {
-            for (let j = i * i; j <= N; j += i) {
-                isPrime[j] = false;
-            }
-        }
+    for (let i = 5; i * i <= N; i += 6) {
+        if (N % i === 0 || N % (i + 2) === 0) return false;
     }
-
-    const primes: number[] = [];
-    for (let i = 2; i <= N; i++) {
-        if(isPrime[i]) {
-            primes.push(i);
-        }
-    }
-    return primes;
-};
+    return true;
+}
 
 const Main = (input: string): void => {
     const lines = input.trim().split('\n');
     const N = Number(lines[0]);
-    console.log(PrintPrimeNumbers(N).join(' '));
+    console.log(isPrimeNumber(N) ? 'Yes' : 'No');
 }
 
 Main(fs.readFileSync('/app/src/index.txt', 'utf-8'));
