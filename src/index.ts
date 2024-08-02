@@ -4,12 +4,16 @@ const Factorization = (N: number): number[] => {
     const list: number[] = [];
     let i = 2;
 
-    while (N >= i) {
+    while (N >= i * i) {
         while (N % i === 0) {
             list.push(i);
             N /= i;
         }
         i++;
+    }
+
+    if (N > 1) {
+        list.push(N);
     }
     return list;
 }
