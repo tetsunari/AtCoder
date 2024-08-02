@@ -1,27 +1,18 @@
 import * as fs from 'fs';
 
-const Factorization = (N: number): number[] => {
-    const list: number[] = [];
-    let i = 2;
-
-    while (N >= i * i) {
-        while (N % i === 0) {
-            list.push(i);
-            N /= i;
-        }
-        i++;
+const Gcd = (A: number, B: number): number => {
+    while (B !== 0) {
+        const ret = A % B;
+        A = B;
+        B = ret;
     }
-
-    if (N > 1) {
-        list.push(N);
-    }
-    return list;
-}
+    return A;
+};
 
 const Main = (input: string): void => {
     const lines = input.trim().split('\n');
-    const N = Number(lines[0]);
-    console.log(Factorization(N).join(' '));
+    const [A, B] = lines[0].split(' ').map(Number);
+    console.log(Gcd(A, B));
 }
 
 Main(fs.readFileSync('/app/src/index.txt', 'utf-8'));
