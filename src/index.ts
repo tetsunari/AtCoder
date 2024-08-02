@@ -1,22 +1,27 @@
 import * as fs from 'fs';
 
-const Divisor = (N: number): number[] => {
-    const divisorList: number[] = [];
-    for (let i = 1; i * i <= N; i++) {
-        if (N % i === 0) {
-            divisorList.push(i);
-            if (i !== N / i) {
-                divisorList.push(N / i);
-            }
+const Factorization = (N: number): number[] => {
+    const list: number[] = [];
+    let i = 2;
+
+    while (N >= i * i) {
+        while (N % i === 0) {
+            list.push(i);
+            N /= i;
         }
+        i++;
     }
-    return divisorList.sort((a, b) => a - b);
+
+    if (N > 1) {
+        list.push(N);
+    }
+    return list;
 }
 
 const Main = (input: string): void => {
     const lines = input.trim().split('\n');
     const N = Number(lines[0]);
-    console.log(Divisor(N).join(' '));
+    console.log(Factorization(N).join(' '));
 }
 
 Main(fs.readFileSync('/app/src/index.txt', 'utf-8'));
