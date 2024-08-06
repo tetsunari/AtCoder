@@ -1,20 +1,24 @@
 import * as fs from 'fs';
 
-const Gcd = (A: number, B: number): number => {
-    console.log(A, B);
-    while (B !== 0) {
-        const ret = A % B;
-        A = B;
-        B = ret;
+const Gcd = (A: bigint, B: bigint): bigint => {
+    while (B !== 0n) {
+        const ret = B;
+        B = A % B;
+        A = ret;
     }
     return A;
 };
 
+function findGCD(arr: bigint[]): bigint
+{
+    return arr.reduce((acc, val) => Gcd(acc, val));
+}
+
 const Main = (input: string): void => {
     const lines = input.trim().split('\n');
-    const N = Number(lines[0]);
-    const A = lines[1].split(' ').map(Number);
-    console.log(A.reduce((acc, val) => Gcd(acc, val)));
+    const A = lines[1].split(' ').map(num => BigInt(num.replace(/,/g, '')));
+    const ret = findGCD(A);
+    console.log(ret.toString());
 }
 
 Main(fs.readFileSync('/app/src/index.txt', 'utf-8'));
