@@ -1,27 +1,37 @@
 import * as fs from 'fs';
 
-const Gcd = (A: bigint, B: bigint): bigint => {
-    while (B !== 0n) {
-        const ret = B;
-        B = A % B;
-        A = ret;
+class buyWay{
+    private count: {[key: number]: number};
+
+    constructor() {
+        this.count = {100: 0, 200: 0, 300: 0, 400: 0};
     }
-    return A;
-};
 
-const Lcm = (a: bigint, b: bigint): bigint => {
-    return (a / Gcd(a, b)) * b;
-}
+    public addItem(price: number): void {
+        if (this.count[price] !== undefined) {
+            this.count[price]++;
+        }
+    }
 
-function findLcm(arr: bigint[]): bigint
-{
-    return arr.reduce((acc, val) => Lcm(acc, val));
+    public countWay(): number {
+        let way = 0;
+        way += this.count[100] * this.count[400];
+        way += this.count[200] * this.count[300];
+        return way;
+    }
 }
 
 const Main = (input: string): void => {
     const lines = input.trim().split('\n');
-    const A = lines[1].split(' ').map(num => BigInt(num.replace(/,/g, '')));
-    console.log(findLcm(A).toString());
+    const N = parseInt(lines[0]);
+    const A = lines[1].split(' ').map(Number);
+
+    const BuyWay = new buyWay();
+    for (let i = 0; i <= N; i++) {
+        BuyWay.addItem(A[i]);
+    }
+
+    console.log(BuyWay.countWay());
 }
 
 Main(fs.readFileSync('/app/src/index.txt', 'utf-8'));
