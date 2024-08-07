@@ -9,16 +9,19 @@ const Gcd = (A: bigint, B: bigint): bigint => {
     return A;
 };
 
-function findGCD(arr: bigint[]): bigint
+const Lcm = (a: bigint, b: bigint): bigint => {
+    return (a / Gcd(a, b)) * b;
+}
+
+function findLcm(arr: bigint[]): bigint
 {
-    return arr.reduce((acc, val) => Gcd(acc, val));
+    return arr.reduce((acc, val) => Lcm(acc, val));
 }
 
 const Main = (input: string): void => {
     const lines = input.trim().split('\n');
     const A = lines[1].split(' ').map(num => BigInt(num.replace(/,/g, '')));
-    const ret = findGCD(A);
-    console.log(ret.toString());
+    console.log(findLcm(A).toString());
 }
 
 Main(fs.readFileSync('/app/src/index.txt', 'utf-8'));
