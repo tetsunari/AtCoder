@@ -1,33 +1,18 @@
 import * as fs from 'fs';
 
 const chooseWay = (A: number[]): number => {
-    const combinations = <T>(arr: T[], k: number): T[][] => {
-        const result: T[][] = [];
-        const comb = (start: number, path: T[]) => {
-            if (path.length === k) {
-                result.push([...path]);
-                return;
-            }
-            for (let i = start; i < arr.length; i++) {
-                path.push(arr[i]);
-                comb(i + 1, path);
-                path.pop();
-            }
-            if (start === 0) return;
-        };
-        comb(0, []);
-        return result;
-    }
+    const dp: number[][] = Array.from({length: 6}, () => Array(1001).fill(0));
+    console.log(dp);
+    dp[0][0] = 1;
 
-    let count = 0;
-    const allCombinations = combinations(A, 5);
-    for (const allCombination of allCombinations) {
-        if (allCombination.reduce((sum, num) =>  sum + num, 0) === 1000) {
-            count++;
+    for (let card of A) {
+        for (let i = 5; i >= 1; i--) {
+            for (let j = 1000; j >= card; j--) {
+                dp[i][j] += dp[i - 1][j - card];
+            }
         }
     }
-
-    return count;
+    return dp[5][1000];
 };
 
 const Main = (input: string): void => {
