@@ -1,39 +1,23 @@
 import * as fs from 'fs';
 
-const mergeSort = (A: number[]): number[] => {
-    if (A.length <= 1) {
-        return A;
+const Frog = (N: number, h: number[]): number => {
+    const dp = new Array(N).fill(0);
+    dp[1] = Math.abs(h[1] - h[0]);
+
+    for (let i = 2; i < N; i++) {
+        dp[i] = Math.min(
+            dp[i - 1] + Math.abs(h[i] - h[i - 1]),
+            dp[i - 2] + Math.abs(h[i] - h[i - 2])
+        );
     }
-
-    const middle = Math.floor(A.length / 2);
-    const left = A.slice(0, middle);
-    const right = A.slice(middle);
-
-    return mergeList(mergeSort(left), mergeSort(right));
-}
-
-const mergeList = (left: number[], right: number[]): number[] => {
-    let result: number[] = [];
-    let leftIndex = 0;
-    let rightIndex = 0;
-
-    while (leftIndex < left.length && rightIndex < right.length) {
-        if (left[leftIndex] < right[rightIndex]) {
-            result.push(left[leftIndex]);
-            leftIndex++;
-        } else {
-            result.push(right[rightIndex]);
-            rightIndex++;
-        }
-    }
-
-    return result.concat(left.slice(leftIndex)).concat(right.slice(rightIndex));
-}
+    return dp[N - 1];
+};
 
 const Main = (input: string): void => {
     const lines = input.trim().split('\n');
-    const A = lines[1].split(' ').map(Number);
-    console.log(mergeSort(A).join(' '));
+    const N = parseInt(lines[0]);
+    const h = lines[1].split(' ').map(Number);
+    console.log(Frog(N, h));
 }
 
 Main(fs.readFileSync('/app/src/index.txt', 'utf-8'));
