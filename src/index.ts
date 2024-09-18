@@ -1,23 +1,24 @@
-import * as fs from 'fs';
+import * as fs from "fs";
 
-const Frog = (N: number, h: number[]): number => {
-    const dp = new Array(N).fill(0);
-    dp[1] = Math.abs(h[1] - h[0]);
+const Stady = (N: number, A: number[]): number => {
+  if (N === 0) return 0;
+  if (N === 1) return A[0];
 
-    for (let i = 2; i < N; i++) {
-        dp[i] = Math.min(
-            dp[i - 1] + Math.abs(h[i] - h[i - 1]),
-            dp[i - 2] + Math.abs(h[i] - h[i - 2])
-        );
-    }
-    return dp[N - 1];
+  let dp: number[] = new Array(N).fill(0);
+  dp[0] = A[0];
+  dp[1] = Math.max(A[0], A[1]);
+
+  for (let i = 2; i < N; i++) {
+    dp[i] = Math.max(dp[i - 1], dp[i - 2] + A[i]);
+  }
+  return dp[N - 1];
 };
 
 const Main = (input: string): void => {
-    const lines = input.trim().split('\n');
-    const N = parseInt(lines[0]);
-    const h = lines[1].split(' ').map(Number);
-    console.log(Frog(N, h));
-}
+  const lines = input.trim().split("\n");
+  const N = parseInt(lines[0]);
+  const A = lines[1].split(" ").map(Number);
+  console.log(Stady(N, A));
+};
 
-Main(fs.readFileSync('/app/src/index.txt', 'utf-8'));
+Main(fs.readFileSync("/app/src/index.txt", "utf-8"));
