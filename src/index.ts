@@ -1,15 +1,14 @@
-import * as fs from 'fs';
+import * as fs from "fs";
 
-const sum = (A: number[]): number => {
-    return A.reduce((prev,curr,index,array) => {
-        return prev + curr;
-    });
+const findX = (X: number, A: number[]): string => {
+  return A.includes(X) ? "Yes" : "No";
 };
 
 const Main = (input: string): void => {
-    const lines = input.trim().split('\n');
-    const A = lines[0].split(' ').map(Number);
-    console.log(sum(A));
-}
+  const lines = input.trim().split("\n");
+  const [N, X]: number[] = lines[0].split(" ").map(Number);
+  const A = lines[1].split(" ").map(Number);
+  console.log(findX(X, A));
+};
 
-Main(fs.readFileSync('/app/src/index.txt', 'utf-8'));
+Main(fs.readFileSync("/app/src/index.txt", "utf-8"));
