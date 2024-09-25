@@ -1,15 +1,42 @@
-import * as fs from 'fs';
+import * as fs from "fs";
 
-const sum = (A: number[]): number => {
-    return A.reduce((prev,curr,index,array) => {
-        return prev + curr;
-    });
-};
-
-const Main = (input: string): void => {
-    const lines = input.trim().split('\n');
-    const A = lines[0].split(' ').map(Number);
-    console.log(sum(A));
+interface ICaclSquare {
+  area(): number;
 }
 
-Main(fs.readFileSync('/app/src/index.txt', 'utf-8'));
+type NumbericInput = number | string;
+
+class calcSquare<T extends NumbericInput> implements ICaclSquare {
+  private N: number;
+  constructor(N: T) {
+    if (typeof N === "string") {
+      const paresedValue = parseFloat(N);
+      if (isNaN(paresedValue)) {
+        throw new Error("Invalid Input");
+      }
+      this.N = paresedValue;
+    } else {
+      this.N = N;
+    }
+  }
+
+  public area(): number {
+    return this.N * this.N;
+  }
+}
+
+const Main = (input: string): void => {
+  const lines = input.trim().split("\n");
+  const N: NumbericInput = lines[0];
+
+  try {
+    const squareArea = new calcSquare(N);
+    console.log(squareArea.area());
+  } catch (error) {
+    if (error instanceof Error) {
+      console.log(error.message);
+    }
+  }
+};
+
+Main(fs.readFileSync("/app/src/index.txt", "utf-8"));
