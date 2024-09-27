@@ -1,20 +1,38 @@
 import * as fs from "fs";
 
-interface IInput {
+interface Input {
   N: number;
-  X: number;
-  A: number[];
+  K: number;
+  P: number[];
+  Q: number[];
 }
 
-const containsX = ({ X, A }: IInput): boolean => A.includes(X);
+type inputFromFile = string | number;
 
-const Main = (input: string): void => {
-  const lines = input.trim().split("\n");
-  const [N, X] = lines[0].split(" ").map(Number);
-  const A = lines[1].split(" ").map(Number);
-  const inputData: IInput = { N, X, A };
-  const result = containsX(inputData) ? "Yes" : "No";
-  console.log(result);
+const findK = ({ K, P, Q }: Input): boolean => {
+  const setQ = new Set(Q);
+  return P.some((p) => setQ.has(K - p));
 };
 
-Main(fs.readFileSync("/app/src/index.txt", "utf-8"));
+const parseInput = (input: inputFromFile): Input => {
+  const [firstLine, SecondLine, ThrdLine] = input.toString().trim().split("\n");
+  const [N, K] = firstLine.split(" ").map(Number);
+  const P = SecondLine.split(" ").map(Number);
+  const Q = ThrdLine.split(" ").map(Number);
+  return { N, K, P, Q };
+};
+
+const Main = (input: string): void => {
+  const parsedInput = parseInput(input);
+  console.log(findK(parsedInput) ? "Yes" : "No");
+};
+
+const inputFilePath = "/app/src/index.txt";
+
+fs.readFile(inputFilePath, "utf-8", (err, data) => {
+  if (err) {
+    console.error("Error reading file:", err);
+    return;
+  }
+  Main(data);
+});
