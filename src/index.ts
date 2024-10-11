@@ -1,30 +1,38 @@
 import * as fs from "fs";
 
-interface Input {
-  N: number;
-  K: number;
-  P: number[];
-  Q: number[];
-}
-
 type inputFromFile = string | number;
 
-const findK = ({ K, P, Q }: Input): boolean => {
-  const setQ = new Set(Q);
-  return P.some((p) => setQ.has(K - p));
+interface IBinaryConvert {
+  fillWithZeros: (binary: string) => string;
+  binaryRepresentation: (N: number) => string;
+}
+
+class BinaryConverter implements IBinaryConvert {
+  fillWithZeros(binary: string): string {
+    return binary.padStart(10, "0");
+  }
+
+  binaryRepresentation(N: number): string {
+    let binary = "";
+    while (N > 0) {
+      binary = (N % 2) + binary;
+      N = Math.floor(N / 2);
+    }
+    return binary;
+  }
+}
+
+const parseInput = <T extends inputFromFile>(input: T): number => {
+  const inputList = input.toString().trim().split("\n");
+  const N = parseInt(inputList[0]);
+  return N;
 };
 
-const parseInput = (input: inputFromFile): Input => {
-  const [firstLine, SecondLine, ThrdLine] = input.toString().trim().split("\n");
-  const [N, K] = firstLine.split(" ").map(Number);
-  const P = SecondLine.split(" ").map(Number);
-  const Q = ThrdLine.split(" ").map(Number);
-  return { N, K, P, Q };
-};
-
-const Main = (input: string): void => {
+const main = (input: string): void => {
   const parsedInput = parseInput(input);
-  console.log(findK(parsedInput) ? "Yes" : "No");
+  const converter = new BinaryConverter();
+  const binary = converter.binaryRepresentation(parsedInput);
+  console.log(converter.fillWithZeros(binary));
 };
 
 const inputFilePath = "/app/src/index.txt";
@@ -34,5 +42,5 @@ fs.readFile(inputFilePath, "utf-8", (err, data) => {
     console.error("Error reading file:", err);
     return;
   }
-  Main(data);
+  main(data);
 });
