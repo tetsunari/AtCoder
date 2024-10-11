@@ -1,46 +1,43 @@
-import * as fs from "fs";
+import { promises as fs } from "fs";
+import * as path from "path";
 
-type inputFromFile = string | number;
-
-interface IBinaryConvert {
-  fillWithZeros: (binary: string) => string;
-  binaryRepresentation: (N: number) => string;
+interface inputData {
+  readonly N: number;
+  readonly K: number;
 }
 
-class BinaryConverter implements IBinaryConvert {
-  fillWithZeros(binary: string): string {
-    return binary.padStart(10, "0");
-  }
+const findWays = ({ N, K }: inputData): number => {
+  let ways = 0;
 
-  binaryRepresentation(N: number): string {
-    let binary = "";
-    while (N > 0) {
-      binary = (N % 2) + binary;
-      N = Math.floor(N / 2);
+  const rangeArray = Array.from({ length: N }, (_, i) => i + 1);
+  const validNumbers = new Set(rangeArray);
+
+  for (let i = 1; i <= N; i++) {
+    for (let j = 1; j <= N; j++) {
+      const k = K - i - j;
+      if (validNumbers.has(k)) {
+        ways++;
+      }
     }
-    return binary;
   }
-}
 
-const parseInput = <T extends inputFromFile>(input: T): number => {
-  const inputList = input.toString().trim().split("\n");
-  const N = parseInt(inputList[0]);
-  return N;
+  return ways;
 };
 
-const main = (input: string): void => {
-  const parsedInput = parseInput(input);
-  const converter = new BinaryConverter();
-  const binary = converter.binaryRepresentation(parsedInput);
-  console.log(converter.fillWithZeros(binary));
+const pareInput = <T extends string>(input: T): inputData => {
+  const [N, K] = input.trim().split(" ").map(Number);
+  return { N, K };
 };
 
-const inputFilePath = "/app/src/index.txt";
-
-fs.readFile(inputFilePath, "utf-8", (err, data) => {
-  if (err) {
-    console.error("Error reading file:", err);
-    return;
+const main = async (): Promise<void> => {
+  const inputFilePath = path.join("/app/src/index.txt");
+  try {
+    const data = await fs.readFile(inputFilePath, "utf-8");
+    const inputData = pareInput(data);
+    console.log(findWays(inputData));
+  } catch (error) {
+    console.error(error);
   }
-  main(data);
-});
+};
+
+main();
