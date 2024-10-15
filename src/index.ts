@@ -1,43 +1,53 @@
 import { promises as fs } from "fs";
 import * as path from "path";
 
-interface inputData {
+interface InputData {
   readonly N: number;
-  readonly K: number;
+  readonly Q: number;
+  readonly A: number[];
+  readonly queries: Array<[number, number]>;
 }
 
-const findWays = ({ N, K }: inputData): number => {
-  let ways = 0;
-
-  const rangeArray = Array.from({ length: N }, (_, i) => i + 1);
-  const validNumbers = new Set(rangeArray);
-
-  for (let i = 1; i <= N; i++) {
-    for (let j = 1; j <= N; j++) {
-      const k = K - i - j;
-      if (validNumbers.has(k)) {
-        ways++;
-      }
-    }
+const calculatePrefixSums = (A: number[]): number[] => {
+  const prefixSums = new Array(A.length + 1).fill(0);
+  for (let i = 0; i < A.length; i++) {
+    prefixSums[i + 1] = prefixSums[i] + A[i];
   }
-
-  return ways;
+  return prefixSums;
 };
 
-const pareInput = <T extends string>(input: T): inputData => {
-  const [N, K] = input.trim().split(" ").map(Number);
-  return { N, K };
+const findWays = (A: number[], queries: Array<[number, number]>, prefixSums: number[]): number[] => {
+  return queries.map(([L, R]) => prefixSums[R] - prefixSums[L - 1]);
+};
+
+const parseInput = (input: string): InputData => {
+  const inputData = input.trim().split("\n");
+  const [N, Q] = inputData[0].split(" ").map(Number);
+  const A = inputData[1].split(" ").map(Number);
+  const queries: Array<[number, number]> = inputData.slice(2).map(line => {
+    const [L, R] = line.split(" ").map(Number);
+    return [L, R] as [number, number];
+  });
+
+  return { N, Q, A, queries };
+};
+
+const readFileAsync = async (filePath: string): Promise<string> => {
+  return fs.readFile(filePath, "utf-8");
 };
 
 const main = async (): Promise<void> => {
   const inputFilePath = path.join("/app/src/index.txt");
+
   try {
-    const data = await fs.readFile(inputFilePath, "utf-8");
-    const inputData = pareInput(data);
-    console.log(findWays(inputData));
+    const data = await readFileAsync(inputFilePath);
+    const inputData = parseInput(data);
+    const prefixSums = calculatePrefixSums(inputData.A);
+    const results = findWays(inputData.A, inputData.queries, prefixSums);
+    console.log(results.join("\n"));
   } catch (error) {
-    console.error(error);
+    console.error("Error reading file:", error);
   }
 };
 
-main();
+main().catch(error => console.error("Uncaught error:", error));
