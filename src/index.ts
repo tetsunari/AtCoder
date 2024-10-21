@@ -2,34 +2,34 @@ import { promises as fs } from "fs";
 import * as path from "path";
 
 interface InputData {
+  readonly D: number;
   readonly N: number;
-  readonly Q: number;
-  readonly A: number[];
   readonly queries: Array<[number, number]>;
 }
 
-const calculatePrefixSums = (A: number[]): number[] => {
-  const prefixSums = new Array(A.length + 1).fill(0);
-  for (let i = 0; i < A.length; i++) {
-    prefixSums[i + 1] = prefixSums[i] + A[i];
-  }
-  return prefixSums;
-};
+const findAttendances = (inputData: InputData): number[] => {
+    const attendances = new Array<number>(inputData.D).fill(0);
 
-const findWays = (A: number[], queries: Array<[number, number]>, prefixSums: number[]): number[] => {
-  return queries.map(([L, R]) => prefixSums[R] - prefixSums[L - 1]);
-};
+    for (const [L, R] of inputData.queries) {
+      attendances[L - 1]++;
+      if (R < inputData.D) {
+        attendances[R]--;
+      }
+    }
+
+    for (let i = 1; i < inputData.D; i++) {
+        attendances[i] += attendances[i - 1];
+    }
+    return attendances;
+}
 
 const parseInput = (input: string): InputData => {
-  const inputData = input.trim().split("\n");
-  const [N, Q] = inputData[0].split(" ").map(Number);
-  const A = inputData[1].split(" ").map(Number);
-  const queries: Array<[number, number]> = inputData.slice(2).map(line => {
-    const [L, R] = line.split(" ").map(Number);
-    return [L, R] as [number, number];
-  });
-
-  return { N, Q, A, queries };
+  const [D, N, ...queries] = input.trim().split("\n");
+  return {
+    D: parseInt(D),
+    N: parseInt(N),
+    queries: queries.map(query => query.split(" ").map(Number) as [number, number]),
+  };
 };
 
 const readFileAsync = async (filePath: string): Promise<string> => {
@@ -42,9 +42,8 @@ const main = async (): Promise<void> => {
   try {
     const data = await readFileAsync(inputFilePath);
     const inputData = parseInput(data);
-    const prefixSums = calculatePrefixSums(inputData.A);
-    const results = findWays(inputData.A, inputData.queries, prefixSums);
-    console.log(results.join("\n"));
+    const attendances = findAttendances(inputData);
+    console.log(attendances.join("\n"));
   } catch (error) {
     console.error("Error reading file:", error);
   }
