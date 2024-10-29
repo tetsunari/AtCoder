@@ -3,32 +3,39 @@ import * as path from 'path';
 
 interface InputData {
   N: number;
-  X: number;
+  K: number;
   A: number[];
 }
 
-const binarySearch = (N: number, X: number, A: number[]): number => {
-  let left = 0;
-  let right = N - 1;
+function findKthFlyerTime(inputData: InputData): number {
+  const countFlyers = (time: number): number => {
+    let total = 0;
+    for (const a of inputData.A) {
+      total += Math.floor(time / a);
+    }
+    return total;
+  };
 
-  while (left <= right) {
+  let left = 0;
+  let right = Math.max(...inputData.A) * inputData.K;
+
+  while (left < right) {
     const mid = Math.floor((left + right) / 2);
-    if (A[mid] === X) {
-      return mid + 1;
-    } else if (A[mid] < X) {
+    if (countFlyers(mid) < inputData.K) {
       left = mid + 1;
     } else {
-      right = mid - 1;
+      right = mid;
     }
   }
-  return -1;
-};
+
+  return left;
+}
 
 const parseInput = (data: string): InputData => {
   const lines = data.trim().split('\n');
-  const [N, X] = lines[0].split(' ').map(Number);
+  const [N, K] = lines[0].split(' ').map(Number);
   const A = lines[1].split(' ').map(Number);
-  return { N, X, A };
+  return { N, K, A };
 };
 
 const readFileAsync = async (filePath: string): Promise<string> => {
@@ -41,8 +48,7 @@ const main = async (): Promise<void> => {
   try {
     const data = await readFileAsync(inputFilePath);
     const inputData = parseInput(data);
-    const ret = binarySearch(inputData.N, inputData.X, inputData.A);
-    console.log(ret);
+    console.log(findKthFlyerTime(inputData));
   } catch (error) {
     console.error("Error reading file:", error);
   }
