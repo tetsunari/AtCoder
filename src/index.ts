@@ -7,28 +7,18 @@ interface InputData {
   A: number[];
 }
 
-function findKthFlyerTime(inputData: InputData): number {
-  const countFlyers = (time: number): number => {
-    let total = 0;
-    for (const a of inputData.A) {
-      total += Math.floor(time / a);
-    }
-    return total;
-  };
+const countPairs = (inputData: InputData): number => {
+  let count = 0;
+  let j = 0;
 
-  let left = 0;
-  let right = Math.max(...inputData.A) * inputData.K;
-
-  while (left < right) {
-    const mid = Math.floor((left + right) / 2);
-    if (countFlyers(mid) < inputData.K) {
-      left = mid + 1;
-    } else {
-      right = mid;
+  for(let i = 0; i < inputData.N; i++) {
+    while(j < inputData.N && inputData.A[j] - inputData.A[i] <= inputData.K) {
+      j++;
     }
+    count += j - i - 1;
   }
 
-  return left;
+  return count;
 }
 
 const parseInput = (data: string): InputData => {
@@ -48,7 +38,7 @@ const main = async (): Promise<void> => {
   try {
     const data = await readFileAsync(inputFilePath);
     const inputData = parseInput(data);
-    console.log(findKthFlyerTime(inputData));
+    console.log(countPairs(inputData));
   } catch (error) {
     console.error("Error reading file:", error);
   }
