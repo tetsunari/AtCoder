@@ -5,27 +5,37 @@ interface InputData {
   N: number;
   K: number;
   A: number[];
+  B: number[];
+  C: number[];
+  D: number[];
 }
 
-const countPairs = (inputData: InputData): number => {
-  let count = 0;
-  let j = 0;
+const canSumTok = (inputData: InputData): boolean => {
+  const sumAB = new Set<number>();
 
-  for(let i = 0; i < inputData.N; i++) {
-    while(j < inputData.N && inputData.A[j] - inputData.A[i] <= inputData.K) {
-      j++;
+  for (let i = 0; i < inputData.N; i++) {
+    for (let j = 0; j < inputData.N; j++) {
+      sumAB.add(inputData.A[i] + inputData.B[j]);
     }
-    count += j - i - 1;
   }
 
-  return count;
-}
+  for (let i = 0; i < inputData.N; i++) {
+    for (let j = 0; j < inputData.N; j++) {
+      const sum = inputData.C[i] + inputData.D[j];
+      if (sumAB.has(inputData.K - sum)) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+};
 
 const parseInput = (data: string): InputData => {
   const lines = data.trim().split('\n');
   const [N, K] = lines[0].split(' ').map(Number);
-  const A = lines[1].split(' ').map(Number);
-  return { N, K, A };
+  const [A, B, C, D] = lines.slice(1).map(line => line.split(' ').map(Number));
+  return { N, K, A, B, C, D };
 };
 
 const readFileAsync = async (filePath: string): Promise<string> => {
@@ -38,7 +48,7 @@ const main = async (): Promise<void> => {
   try {
     const data = await readFileAsync(inputFilePath);
     const inputData = parseInput(data);
-    console.log(countPairs(inputData));
+    console.log(canSumTok(inputData) ? "Yes" : "No");
   } catch (error) {
     console.error("Error reading file:", error);
   }
