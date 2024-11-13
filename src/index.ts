@@ -3,39 +3,23 @@ import * as path from 'path';
 
 interface InputData {
   N: number;
-  K: number;
   A: number[];
-  B: number[];
-  C: number[];
-  D: number[];
-}
-
-const canSumTok = (inputData: InputData): boolean => {
-  const sumAB = new Set<number>();
-
-  for (let i = 0; i < inputData.N; i++) {
-    for (let j = 0; j < inputData.N; j++) {
-      sumAB.add(inputData.A[i] + inputData.B[j]);
-    }
-  }
-
-  for (let i = 0; i < inputData.N; i++) {
-    for (let j = 0; j < inputData.N; j++) {
-      const sum = inputData.C[i] + inputData.D[j];
-      if (sumAB.has(inputData.K - sum)) {
-        return true;
-      }
-    }
-  }
-
-  return false;
 };
+
+const compression = (inputData: InputData): number[] => {
+  const { N, A } = inputData;
+  const B = Array.from(new Set(A));
+  const C = B.sort((a, b) => a - b);
+  const indexMap = new Map<number, number>();
+  C.forEach((v, i) => indexMap.set(v, i + 1));
+  return A.map((a) => indexMap.get(a)!);
+}
 
 const parseInput = (data: string): InputData => {
   const lines = data.trim().split('\n');
-  const [N, K] = lines[0].split(' ').map(Number);
-  const [A, B, C, D] = lines.slice(1).map(line => line.split(' ').map(Number));
-  return { N, K, A, B, C, D };
+  const N = parseInt(lines[0]);
+  const A = lines[1].split(' ').map(Number);
+  return { N, A };
 };
 
 const readFileAsync = async (filePath: string): Promise<string> => {
@@ -48,7 +32,7 @@ const main = async (): Promise<void> => {
   try {
     const data = await readFileAsync(inputFilePath);
     const inputData = parseInput(data);
-    console.log(canSumTok(inputData) ? "Yes" : "No");
+    console.log(compression(inputData).join(' '));
   } catch (error) {
     console.error("Error reading file:", error);
   }
