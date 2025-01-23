@@ -1,36 +1,48 @@
-import * as fs from 'fs';
-import * as path from 'path';
+import { promises as fs } from 'fs';
+import path from 'path';
 
-interface InputData {
-  N: number;
-  A: number;
-};
-
-const calc = (inputData: InputData): number => {
-  const { N, A } = inputData;
-  const sum = (N + A);
-  return sum * sum;
+interface CalculationResult {
+  total: number;
 }
 
-const parseInput = (data: string): InputData => {
-  const lines = data.trim().split('\n');
-  const [N, A] = lines[0].split(' ').map(Number);
-  return { N, A };
+const calc = (x: number): CalculationResult => {
+  let total = 0;
+  for (let i = 1; i < 10; i++) {
+    for (let j = 1; j < 10; j++) {
+      if (i * j === x) continue;
+      total += i * j;
+    }
+  }
+  return { total };
+};
+
+const parseInput = (data: string): number => {
+  const [firstLine] = data.trim().split('\n');
+  const parsed = Number(firstLine);
+  if (isNaN(parsed)) {
+    throw new Error('Invalid input: not a number');
+  }
+  return parsed;
 };
 
 const readFileAsync = async (filePath: string): Promise<string> => {
-  return fs.promises.readFile(filePath, "utf-8");
+  return fs.readFile(filePath, 'utf-8');
 };
 
 const main = async (): Promise<void> => {
-  const inputFilePath = path.join("/app/src/index.txt");
+  const inputFilePath = path.join('/app/src/index.txt');
 
   try {
     const data = await readFileAsync(inputFilePath);
     const inputData = parseInput(data);
-    console.log(calc(inputData));
-  } catch (error) {
-    console.error("Error reading file:", error);
+    const result = calc(inputData);
+    console.log(result.total);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error(`Error reading file: ${error.message}`);
+    } else {
+      console.error('An unexpected error occurred.');
+    }
   }
 };
 
